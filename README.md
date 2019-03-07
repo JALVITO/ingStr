@@ -1,3 +1,7 @@
+#ingStr
+`ingStr` is a game about string manipulation meant to be played between a server and player clients.
+
+
 ## GLOSSARY:
 * **Playing field:** all available strings in play.
 * **Player inventory:** collection of words the player has formed.
