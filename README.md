@@ -63,7 +63,7 @@ _Result:_ \
 
 **Example:** \
 0 ABC \
-1 DEF \
+1 DEF
 
 _Query:_ reverse 0
 
@@ -77,7 +77,7 @@ _Result:_ \
 
 **Example:** \
 0 ABC \
-1 DEF \
+1 DEF
 
 _Query:_ identify 0
 
