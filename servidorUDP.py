@@ -40,7 +40,7 @@ def buildFieldString():
             l1 += "    5"
             if len(word) > 10:
                 for x in range(11, len(word), 5):
-                    l1 += "    " + str(x/10)
+                    l1 += "    " + str(int(x/10))
                     l2 += str((x-1) % 10) + "    "
 
     s += word + "\n" + l1 + "\n" + l2 + "\n"
@@ -92,36 +92,40 @@ def main():
 
     # Add Player 1
     datos, address = s.recvfrom(1024)
-    add_player(address, datos[1])
+    str_datos = datos.decode('utf-8')
+    add_player(address, str_datos)
     print(players[0])
 
     # Add Player 2
     datos, address = s.recvfrom(1024)
-    add_player(address, datos[1])
+    str_datos = datos.decode('utf-8')
+    add_player(address, str_datos)
     print(players[1])
 
     while True:
-        datos = " "
-        s.sendto("Your turn", players[0]["ip"])
-        while datos != "endTurn":
-            s.sendto(buildFieldString(), players[0]["ip"])
+        str_datos = " "
+        s.sendto("Your turn".encode('utf-8'), players[0]["ip"])
+        while str_datos != "endTurn":
+            s.sendto(buildFieldString().encode('utf-8'), players[0]["ip"])
             datos, address = s.recvfrom(1024)
+            str_datos = datos.decode('utf-8')
 
-            print(address[0] + " sent: " + datos)
-            analyzeData(datos.split(), address)
+            print(address[0] + " sent: " + str_datos)
+            analyzeData(str_datos.split(), address)
 
-            s.sendto(buildFieldString(), players[1]["ip"])
+            s.sendto(buildFieldString().encode('utf-8'), players[1]["ip"])
 
-        datos = " "
-        s.sendto("Your turn", players[1]["ip"])
-        while datos != "endTurn":
-            s.sendto(buildFieldString(), players[1]["ip"])
+        str_datos = " "
+        s.sendto("Your turn".encode('utf-8'), players[1]["ip"])
+        while str_datos != "endTurn":
+            s.sendto(buildFieldString().encode('utf-8'), players[1]["ip"])
             datos, address = s.recvfrom(1024)
+            str_datos = datos.decode('utf-8')
 
-            print(address[0] + " sent: " + datos)
-            analyzeData(datos.split(), address)
+            print(address[0] + " sent: " + str_datos)
+            analyzeData(str_datos.split(), address)
 
-            s.sendto(buildFieldString(), players[0]["ip"])
+            s.sendto(buildFieldString().encode('utf-8'), players[0]["ip"])
 
     s.close()
 
