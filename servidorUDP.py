@@ -91,34 +91,34 @@ def main():
 
     #Add Player 1
     datos, address = s.recvfrom(1024)
-    add_player(ip, data[1])
+    add_player(address, datos[1])
 
     #Add Player 2
-    #datos, address = s.recvfrom(1024)
-    #add_player(ip, data[1])
+    datos, address = s.recvfrom(1024)
+    add_player(ip, data[1])
 
     while True:
         
-        while datos != "endTurn"
-            s.sendto("Your turn", players[0])
-            s.sendto(buildFieldString(), players[0])
+        while datos != "endTurn":
+            s.sendto("Your turn", players[0]["ip"])
+            s.sendto(buildFieldString(), players[0]["ip"])
             datos, address = s.recvfrom(1024)
 
             print(address[0] + " sent: " + datos)
             analyzeData(datos.split(), address)
 
-            s.sendto(buildFieldString(), players[1])
+            s.sendto(buildFieldString(), players[1]["ip"])
 
         datos = " "
-        while datos != "endTurn"
+        while datos != "endTurn":
             s.sendto("Your turn", players[1])
-            s.sendto(buildFieldString(), players[1])
+            s.sendto(buildFieldString(), players[1]["ip"])
             datos, address = s.recvfrom(1024)
 
             print(address[0] + " sent: " + datos)
             analyzeData(datos.split(), address)
             
-            s.sendto(buildFieldString(), players[0])
+            s.sendto(buildFieldString(), players[0]["ip"])
 
 
     s.close()

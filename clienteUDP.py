@@ -22,15 +22,15 @@ s.sendto(('player ' + nombre), (IPservidor, PUERTOservidor))
 
 while mensaje != "quit":
 
-	while respuesta != "Your turn"
-		respuesta = s.recv(1024)
+    while respuesta != "Your turn":
+        respuesta = s.recv(1024)
 
-	print(respuesta)
+    print(respuesta)
 
-	while mensaje != "endTurn"
-		respuesta = s.recv(1024)
-		print(respuesta)
-	    mensaje = input("Query: ")
-	    s.sendto(mensaje, (IPservidor, PUERTOservidor))
+    while mensaje != "endTurn":
+        respuesta = s.recv(1024)
+        print(respuesta)
+        mensaje = input("Query: ")
+        s.sendto(mensaje, (IPservidor, PUERTOservidor))
 
 s.close()
