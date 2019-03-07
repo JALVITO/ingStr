@@ -1,4 +1,4 @@
-#ingStr
+# ingStr
 `ingStr` is a game about string manipulation meant to be played between a server and player clients.
 
 
