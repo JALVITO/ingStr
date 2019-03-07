@@ -6,18 +6,18 @@ import socket
 import random
 import bisect
 
-playField = [""]
+play_field = [""]
 players = []
 
 
-def initConnection():
+def init_connection():
     server_port = 5000
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     s.bind(("", server_port))
     return s
 
 
-def createString():
+def create_string():
     letters = ["E", "T", "A", "O", "I", "N", "S", "R", "H", "D", "L", "U", "C",
                "M", "F", "Y", "W", "G", "P", "B", "V", "K", "X", "Q", "J", "Z"]
     prob = [0.1202, 0.2112, 0.2924, 0.3692, 0.4423, 0.5118, 0.5746, 0.6348,
@@ -27,12 +27,12 @@ def createString():
 
     for x in range(30):
         num = random.random()
-        playField[0] += letters[bisect.bisect(prob, num)]
+        play_field[0] += letters[bisect.bisect(prob, num)]
 
 
-def buildFieldString():
+def build_field_string():
     s = ""
-    for word in playField:
+    for word in play_field:
         l1 = "0"
         l2 = "          "
 
@@ -47,7 +47,7 @@ def buildFieldString():
     return s
 
 
-def analyzeData(data, ip):
+def analyze_data(data, ip):
     if "substring" in data:
         substring(int(data[1]), int(data[2]), int(data[3]))
     elif "concat" in data:
@@ -87,8 +87,8 @@ def end_game():
 
 
 def main():
-    createString()
-    s = initConnection()
+    create_string()
+    s = init_connection()
 
     # Add Player 1
     datos, address = s.recvfrom(1024)
@@ -106,26 +106,26 @@ def main():
         str_datos = " "
         s.sendto("Your turn".encode('utf-8'), players[0]["ip"])
         while str_datos != "endTurn":
-            s.sendto(buildFieldString().encode('utf-8'), players[0]["ip"])
+            s.sendto(build_field_string().encode('utf-8'), players[0]["ip"])
             datos, address = s.recvfrom(1024)
             str_datos = datos.decode('utf-8')
 
             print(address[0] + " sent: " + str_datos)
-            analyzeData(str_datos.split(), address)
+            analyze_data(str_datos.split(), address)
 
-            s.sendto(buildFieldString().encode('utf-8'), players[1]["ip"])
+            s.sendto(build_field_string().encode('utf-8'), players[1]["ip"])
 
         str_datos = " "
         s.sendto("Your turn".encode('utf-8'), players[1]["ip"])
         while str_datos != "endTurn":
-            s.sendto(buildFieldString().encode('utf-8'), players[1]["ip"])
+            s.sendto(build_field_string().encode('utf-8'), players[1]["ip"])
             datos, address = s.recvfrom(1024)
             str_datos = datos.decode('utf-8')
 
             print(address[0] + " sent: " + str_datos)
-            analyzeData(str_datos.split(), address)
+            analyze_data(str_datos.split(), address)
 
-            s.sendto(buildFieldString().encode('utf-8'), players[0]["ip"])
+            s.sendto(build_field_string().encode('utf-8'), players[0]["ip"])
 
     s.close()
 
