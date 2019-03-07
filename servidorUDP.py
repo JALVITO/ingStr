@@ -31,7 +31,7 @@ def createString():
 
 
 def buildFieldString():
-    str = ""
+    s = ""
     for word in playField:
         l1 = "0"
         l2 = "          "
@@ -43,7 +43,8 @@ def buildFieldString():
                     l1 += "    " + str(x/10)
                     l2 += str((x-1) % 10) + "    "
 
-    str += word + "\n" + l1 + "\n" + l2 + "\n"
+    s += word + "\n" + l1 + "\n" + l2 + "\n"
+    return s
 
 
 def analyzeData(data, ip):
@@ -92,15 +93,17 @@ def main():
     #Add Player 1
     datos, address = s.recvfrom(1024)
     add_player(address, datos[1])
+    print(players[0])
 
     #Add Player 2
     datos, address = s.recvfrom(1024)
     add_player(address, datos[1])
+    print(players[1])
 
     while True:
         
+        s.sendto("Your turn", players[0]["ip"])
         while datos != "endTurn":
-            s.sendto("Your turn", players[0]["ip"])
             s.sendto(buildFieldString(), players[0]["ip"])
             datos, address = s.recvfrom(1024)
 
@@ -110,8 +113,8 @@ def main():
             s.sendto(buildFieldString(), players[1]["ip"])
 
         datos = " "
+        s.sendto("Your turn", players[1]["ip"])
         while datos != "endTurn":
-            s.sendto("Your turn", players[1])
             s.sendto(buildFieldString(), players[1]["ip"])
             datos, address = s.recvfrom(1024)
 
