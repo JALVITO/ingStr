@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Para que entienda acentos
+# To understand special characters
 
 import socket
 
@@ -10,31 +10,31 @@ try:
 except NameError:
     pass
 
-IPservidor = input("Dirección del servidor: ")
-PUERTOservidor = 5000
-mensaje = " "
-str_respuesta = " "
+ip_server = input("Dirección del servidor: ")
+server_port = 5000
+message = " "
+str_reponse = " "
 
 s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
 nombre = input("Nombre de jugador: ")
-s.sendto(nombre.encode('utf-8'), (IPservidor, PUERTOservidor))
+s.sendto(nombre.encode('utf-8'), (ip_server, server_port))
 
-while mensaje != "quit":
+while message != "quit":
 
-    while str_respuesta != "Your turn":
+    while str_reponse != "Your turn":
         respuesta = s.recv(1024)
-        str_respuesta = respuesta.decode('utf-8')
+        str_reponse = respuesta.decode('utf-8')
 
-    print(str_respuesta)
+    print(str_reponse)
 
-    while mensaje != "endTurn":
+    while message != "endTurn":
         respuesta = s.recv(1024)
-        str_respuesta = respuesta.decode('utf-8')
-        print(str_respuesta)
-        mensaje = input("Query: ")
-        s.sendto(mensaje.encode('utf-8'), (IPservidor, PUERTOservidor))
+        str_reponse = respuesta.decode('utf-8')
+        print(str_reponse)
+        message = input("Query: ")
+        s.sendto(message.encode('utf-8'), (ip_server, server_port))
 
-    mensaje = " "
+    message = " "
 
 s.close()

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Para que entienda acentos
+# To understand special characters
 
 import socket
 import random
@@ -11,9 +11,9 @@ players = []
 
 
 def initConnection():
-    PUERTOservidor = 5000
+    server_port = 5000
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    s.bind(("", PUERTOservidor))
+    s.bind(("", server_port))
     return s
 
 
