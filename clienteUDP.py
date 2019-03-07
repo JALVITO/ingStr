@@ -33,4 +33,6 @@ while mensaje != "quit":
         mensaje = input("Query: ")
         s.sendto(mensaje, (IPservidor, PUERTOservidor))
 
+    mensaje = " "
+
 s.close()

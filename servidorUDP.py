@@ -90,18 +90,18 @@ def main():
     createString()
     s = initConnection()
 
-    #Add Player 1
+    # Add Player 1
     datos, address = s.recvfrom(1024)
     add_player(address, datos[1])
     print(players[0])
 
-    #Add Player 2
+    # Add Player 2
     datos, address = s.recvfrom(1024)
     add_player(address, datos[1])
     print(players[1])
 
     while True:
-        
+        datos = " "
         s.sendto("Your turn", players[0]["ip"])
         while datos != "endTurn":
             s.sendto(buildFieldString(), players[0]["ip"])
@@ -120,9 +120,8 @@ def main():
 
             print(address[0] + " sent: " + datos)
             analyzeData(datos.split(), address)
-            
-            s.sendto(buildFieldString(), players[0]["ip"])
 
+            s.sendto(buildFieldString(), players[0]["ip"])
 
     s.close()
 
