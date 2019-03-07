@@ -51,7 +51,7 @@ _Result:_ \
 1 CD \
 2 EF
 
-_Query:_ concat 0 1
+_Query:_ concat 0 2
 
 _Result:_ \
 0 CD \
