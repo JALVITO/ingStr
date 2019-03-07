@@ -95,7 +95,7 @@ def main():
 
     #Add Player 2
     datos, address = s.recvfrom(1024)
-    add_player(ip, data[1])
+    add_player(address, datos[1])
 
     while True:
         
