@@ -47,7 +47,7 @@ def build_field_string():
                     l1 += "    " + str(int(x/10))
                     l2 += str((x-1) % 10) + "    "
 
-    s += word + "\n" + l1 + "\n" + l2 + "\n"
+        s += word + "\n" + l1 + "\n" + l2 + "\n"
     return s
 
 
@@ -71,10 +71,15 @@ def add_player(ip, name):
 
 
 def substring(word_id, low_bound, up_bound):
+    play_field.append(play_field[word_id][low_bound:up_bound+1]);
+    play_field[word_id] = play_field[word_id][0:low_bound] + play_field[word_id][up_bound+1:len(play_field[word_id])]
     return
 
 
 def concat(word1_id, word2_id):
+    play_field.append(play_field[word1_id] + play_field[word2_id])
+    play_field.pop(word1_id)
+    play_field.pop(word2_id)
     return
 
 
