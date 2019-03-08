@@ -5,9 +5,9 @@
 You need to have an App_id and add_key from Oxford dictionary api
 
 Run the following commands:
-`pip install requests`
-`export APP_ID=<YOUR_APP_ID_FROM_OXFORD_DICTIONARY>`
-`export APP_KEY=<YOUR_APP_KEY_FROM_OXFORD_DICTIONARY>`
+  - `pip install requests`
+  - `export APP_ID=<YOUR_APP_ID_FROM_OXFORD_DICTIONARY>`
+  - `export APP_KEY=<YOUR_APP_KEY_FROM_OXFORD_DICTIONARY>`
 
 NOTE: You can add the exports in your `bash_profile` or equivalent file
 
