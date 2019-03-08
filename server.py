@@ -5,9 +5,13 @@
 import socket
 import random
 import bisect
+import requests
+from os import environ
 
 play_field = [""]
 players = []
+headers = {'app_id': environ.get('APP_ID'), 'app_key': environ.get('APP_KEY')}
+language = 'en'
 
 
 def init_connection():
@@ -55,7 +59,7 @@ def analyze_data(data, ip):
     elif "reverse" in data:
         reverse(int(data[1]))
     elif "identify" in data:
-        identify(int(data[1]))
+        is_valid(data[1])
     elif "end" in data:
         end_game()
     # else:
@@ -78,7 +82,23 @@ def reverse(word_id):
     return
 
 
+def is_valid(word):
+    uri_entry = 'https://od-api.oxforddictionaries.com/api/v1/entries/'
+    uri_lemmatron = 'https://od-api.oxforddictionaries.com/api/v1/inflections/'
+    uris = [uri_entry, uri_lemmatron]
+    for uri in uris:
+        uri += language + '/' + word
+        r = requests.get(uri, headers=headers)
+        if r.status_code == 200:
+            return True
+    return False
+
+
 def identify(word_id):
+    if is_valid(play_field):
+        print("It exists")
+    else:
+        print("It doesn't exists")
     return
 
 
