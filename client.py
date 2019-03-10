@@ -19,6 +19,7 @@ s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
 nombre = input("Nombre de jugador: ")
 s.sendto(nombre.encode('utf-8'), (ip_server, server_port))
+print(s.recv(1024).decode('utf-8'))
 
 while message != "quit":
 
