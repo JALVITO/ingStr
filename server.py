@@ -51,7 +51,8 @@ def build_field_string():
                     l1 += "    " + str(int(x/10))
                     l2 += str((x-1) % 10) + "    "
 
-        field += "{:0>2}".format(cont) + " " + word + "\n" + l1 + "\n" + l2 + "\n"
+        field += "{:0>2}".format(cont) + " " + word
+        field += "\n" + l1 + "\n" + l2 + "\n"
         cont += 1
     return field
 
