@@ -69,14 +69,13 @@ def analyze_data(data, player_id):
             movements -= 1
         elif "identify" in data:
             identify(int(data[1]), player_id)
+            movements -= 1
         elif "end" in data:
             end_game()
         else:
-            print("else")
             return False
         return True
     except IndexError:
-        print("IndexError")
         return False
 
 
@@ -148,7 +147,7 @@ def player_turn(player_id):
     global movements
     str_data = " "
     success = True
-    movements = 2
+    movements = 3
     s.sendto("Your turn".encode('utf-8'), players[player_id]["ip"])
     s.sendto(build_field_string().encode('utf-8'), players[player_id]["ip"])
 
