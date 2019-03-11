@@ -21,13 +21,15 @@ name = input("Nombre de jugador: ")
 s.sendto(name.encode('utf-8'), (ip_server, server_port))
 print(s.recv(1024).decode('utf-8'))
 
-while message != "quit":
+while message != "quit" and str_response != "endGame":
 
-    while str_response != "Your turn":
+    while str_response != "Your turn" and str_response != "Ending game...":
         response = s.recv(1024)
         str_response = response.decode('utf-8')
 
     print(str_response)
+    if str_response == "Ending game...":
+        break
 
     response = s.recv(1024)
     str_response = response.decode('utf-8')
@@ -41,9 +43,14 @@ while message != "quit":
         print(str_response)
 
         response = s.recv(1024)
-        if response.decode('utf-8') == "end":
+        str_response = response.decode('utf-8')
+        if str_response == "end" or str_response == "endGame":
             break
 
     message = " "
+
+response = s.recv(1024)
+str_response = response.decode('utf-8')
+print(str_response)
 
 s.close()

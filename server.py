@@ -14,6 +14,7 @@ headers = {'app_id': environ.get('APP_ID'), 'app_key': environ.get('APP_KEY')}
 language = 'en'
 s = None
 movements = None
+gameRunning = True
 
 
 def init_connection():
@@ -37,7 +38,7 @@ def create_string():
 
 
 def build_field_string():
-    s = ""
+    field = ""
     cont = 0
     for word in play_field:
         l1 = "   0"
@@ -50,9 +51,9 @@ def build_field_string():
                     l1 += "    " + str(int(x/10))
                     l2 += str((x-1) % 10) + "    "
 
-        s += "{:0>2}".format(cont) + " " + word + "\n" + l1 + "\n" + l2 + "\n"
+        field += "{:0>2}".format(cont) + " " + word + "\n" + l1 + "\n" + l2 + "\n"
         cont += 1
-    return s
+    return field
 
 
 def analyze_data(data, player_id):
@@ -71,7 +72,7 @@ def analyze_data(data, player_id):
             identify(int(data[1]), player_id)
             movements -= 1
         elif "end" in data:
-            end_game()
+            end_game(player_id)
         else:
             return False
         return True
@@ -131,7 +132,69 @@ def identify(word_id, player_id):
     return False
 
 
-def end_game():
+def end_game(player_id):
+    global gameRunning
+    global movements
+    result = ""
+    score_player1 = 0
+    score_player2 = 0
+
+    for word in players[0]["words"]:
+        score_player1 += len(word)
+    for word in players[1]["words"]:
+        score_player2 += len(word)
+
+    if score_player1 > score_player2:
+        result += players[0]["name"] + " won \n \n"
+    elif score_player1 < score_player2:
+        result += players[1]["name"] + " won \n \n"
+    else:
+        players[0]["words"].sort(key=len, reverse=True)
+        players[1]["words"].sort(key=len, reverse=True)
+
+        word_amount = min(len(players[0]["words"]), len(players[1]["words"]))
+
+        equal = 0
+        for i in range(0, word_amount):
+            word_player1 = players[0]["words"][i]
+            word_player2 = players[1]["words"][i]
+
+            if len(word_player1) > len(word_player2):
+                result += players[0]["name"] + " won \n"
+                break
+            elif len(word_player1) < len(word_player2):
+                result += players[1]["name"] + " won \n"
+                break
+            else:
+                equal += 1
+
+        if equal == len(players[1]["words"]):
+            result += "Game is a tie \n"
+
+    result += "\n" + players[0]["name"] + "'s inventory: \n"
+    for word in players[0]["words"]:
+        result += word + "\n"
+
+    result += "\n" + players[1]["name"] + "'s inventory: \n"
+    for word in players[1]["words"]:
+        result += word + "\n"
+
+    if player_id == 0:
+        s.sendto("Ending game...".encode('utf-8'), players[0]["ip"])
+        s.sendto("endGame".encode('utf-8'), players[0]["ip"])
+        s.sendto(result.encode('utf-8'), players[0]["ip"])
+        s.sendto("Ending game...".encode('utf-8'), players[1]["ip"])
+        s.sendto(result.encode('utf-8'), players[1]["ip"])
+
+    else:
+        s.sendto("Ending game...".encode('utf-8'), players[1]["ip"])
+        s.sendto("endGame".encode('utf-8'), players[1]["ip"])
+        s.sendto(result.encode('utf-8'), players[1]["ip"])
+        s.sendto("Ending game...".encode('utf-8'), players[0]["ip"])
+        s.sendto(result.encode('utf-8'), players[0]["ip"])
+
+    gameRunning = False
+    movements = 0
     return
 
 
@@ -179,9 +242,10 @@ def main():
         connect_player(0)
         connect_player(1)
 
-        while True:
+        while gameRunning:
             player_turn(0)
-            player_turn(1)
+            if gameRunning:
+                player_turn(1)
 
         s.close()
     except KeyboardInterrupt:
