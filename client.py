@@ -17,21 +17,21 @@ str_reponse = " "
 
 s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
-nombre = input("Nombre de jugador: ")
-s.sendto(nombre.encode('utf-8'), (ip_server, server_port))
+name = input("Nombre de jugador: ")
+s.sendto(name.encode('utf-8'), (ip_server, server_port))
 print(s.recv(1024).decode('utf-8'))
 
 while message != "quit":
 
     while str_reponse != "Your turn":
-        respuesta = s.recv(1024)
-        str_reponse = respuesta.decode('utf-8')
+        repose = s.recv(1024)
+        str_reponse = repose.decode('utf-8')
 
     print(str_reponse)
 
     while message != "endTurn":
-        respuesta = s.recv(1024)
-        str_reponse = respuesta.decode('utf-8')
+        repose = s.recv(1024)
+        str_reponse = repose.decode('utf-8')
         print(str_reponse)
         message = input("Query: ")
         s.sendto(message.encode('utf-8'), (ip_server, server_port))
