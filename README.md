@@ -97,7 +97,7 @@ _Query:_ identify 0
 _Result:_ \
 0 DEF
 
-> endTurn
+> end_turn
 
 **Definition:** ends a player's turn and passes control over to other player.
 
