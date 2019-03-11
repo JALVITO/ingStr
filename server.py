@@ -83,8 +83,9 @@ def add_player(ip, name):
 
 
 def substring(word_id, low_bound, up_bound):
-    play_field.append(play_field[word_id][low_bound:up_bound+1])
-    play_field[word_id] = play_field[word_id][0:low_bound] + play_field[word_id][up_bound+1:len(play_field[word_id])]
+    word = play_field[word_id]
+    play_field.append(word[low_bound:up_bound+1])
+    play_field[word_id] = word[0:low_bound] + word[up_bound+1:]
     return
 
 
