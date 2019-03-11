@@ -13,7 +13,7 @@ except NameError:
 ip_server = input("Dirección del servidor: ")
 server_port = 5000
 message = " "
-str_reponse = " "
+str_response = " "
 
 s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
@@ -23,18 +23,26 @@ print(s.recv(1024).decode('utf-8'))
 
 while message != "quit":
 
-    while str_reponse != "Your turn":
-        repose = s.recv(1024)
-        str_reponse = repose.decode('utf-8')
+    while str_response != "Your turn":
+        response = s.recv(1024)
+        str_response = response.decode('utf-8')
 
-    print(str_reponse)
+    print(str_response)
+
+    response = s.recv(1024)
+    str_response = response.decode('utf-8')
+    print(str_response)
 
     while message != "endTurn":
-        repose = s.recv(1024)
-        str_reponse = repose.decode('utf-8')
-        print(str_reponse)
         message = input("Query: ")
         s.sendto(message.encode('utf-8'), (ip_server, server_port))
+        response = s.recv(1024)
+        str_response = response.decode('utf-8')
+        print(str_response)
+
+        response = s.recv(1024)
+        if response.decode('utf-8') == "end":
+            break
 
     message = " "
 

@@ -58,7 +58,7 @@ def build_field_string():
 def analyze_data(data, player_id):
     global movements
     try:
-        if "substring" in data:
+        if "substring" in data and int(data[2]) <= int(data[3]):
             substring(int(data[1]), int(data[2]), int(data[3]))
             movements -= 1
         elif "concat" in data:
@@ -72,9 +72,11 @@ def analyze_data(data, player_id):
         elif "end" in data:
             end_game()
         else:
+            print("else")
             return False
         return True
     except IndexError:
+        print("IndexError")
         return False
 
 
@@ -123,8 +125,8 @@ def is_valid(word):
 def identify(word_id, player_id):
     if is_valid(play_field[word_id]):
         print("It exists")
-        play_field.pop(word_id)
         players[player_id]["words"].append(play_field[word_id])
+        play_field.pop(word_id)
         return True
     print("It doesn't exists")
     return False
@@ -135,7 +137,6 @@ def end_game():
 
 
 def connect_player(player_id):
-    # Add Player 1
     data, address = s.recvfrom(1024)
     str_data = data.decode('utf-8')
     add_player(address, str_data)
@@ -149,7 +150,15 @@ def player_turn(player_id):
     success = True
     movements = 2
     s.sendto("Your turn".encode('utf-8'), players[player_id]["ip"])
+    s.sendto(build_field_string().encode('utf-8'), players[player_id]["ip"])
+
     while str_data != "endTurn" and movements > 0:
+        data, address = s.recvfrom(1024)
+        str_data = data.decode('utf-8')
+
+        print(address[0] + " sent: " + str_data)
+        success = analyze_data(str_data.split(), player_id)
+
         if (success):
             s.sendto(build_field_string().encode('utf-8'),
                      players[player_id]["ip"])
@@ -157,11 +166,10 @@ def player_turn(player_id):
             s.sendto("Query invalido \n".encode('utf-8'),
                      players[player_id]["ip"])
 
-        data, address = s.recvfrom(1024)
-        str_data = data.decode('utf-8')
-
-        print(address[0] + " sent: " + str_data)
-        success = analyze_data(str_data.split(), player_id)
+        if movements > 0:
+            s.sendto("cont".encode('utf-8'), players[player_id]["ip"])
+        else:
+            s.sendto("end".encode('utf-8'), players[player_id]["ip"])
 
 
 def main():
