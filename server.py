@@ -12,13 +12,15 @@ play_field = [""]
 players = []
 headers = {'app_id': environ.get('APP_ID'), 'app_key': environ.get('APP_KEY')}
 language = 'en'
+s = None
+movements = None
 
 
 def init_connection():
     server_port = 5000
+    global s
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     s.bind(("", server_port))
-    return s
 
 
 def create_string():
@@ -53,39 +55,26 @@ def build_field_string():
     return s
 
 
-def analyze_data(data):
-    if "substring" in data:
-        if (len(data) == 4 and 0 <= int(data[1]) < len(play_field) and
-                0 <= int(data[2]) < len(play_field[int(data[1])]) and
-                0 <= int(data[3]) < len(play_field[int(data[1])]) and
-                int(data[2]) <= int(data[3])):
+def analyze_data(data, player_id):
+    global movements
+    try:
+        if "substring" in data:
             substring(int(data[1]), int(data[2]), int(data[3]))
-            return True
-        else:
-            return False
-    elif "concat" in data:
-        if (len(data) == 3 and 0 <= int(data[1]) < len(play_field) and
-                0 <= int(data[2]) < len(play_field)):
+            movements -= 1
+        elif "concat" in data:
             concat(int(data[1]), int(data[2]))
-            return True
-        else:
-            return False
-    elif "reverse" in data:
-        if len(data) == 2 and 0 <= int(data[1]) < len(play_field):
+            movements -= 1
+        elif "reverse" in data:
             reverse(int(data[1]))
-            return True
+            movements -= 1
+        elif "identify" in data:
+            identify(int(data[1]), player_id)
+        elif "end" in data:
+            end_game()
         else:
             return False
-    elif "identify" in data:
-        if len(data) == 2 and 0 <= int(data[1]) < len(play_field):
-            is_valid(data[1])
-            return True
-        else:
-            return False
-    elif "end" in data:
-        end_game()
         return True
-    else:
+    except IndexError:
         return False
 
 
@@ -130,66 +119,60 @@ def is_valid(word):
     return False
 
 
-def identify(word_id):
+def identify(word_id, player_id):
     if is_valid(play_field[word_id]):
         print("It exists")
-    else:
-        print("It doesn't exists")
-    return
+        play_field.pop(word_id)
+        players[player_id]["words"].append(play_field[word_id])
+        return True
+    print("It doesn't exists")
+    return False
 
 
 def end_game():
     return
 
 
-def main():
-    create_string()
-    s = init_connection()
-
+def connect_player(player_id):
     # Add Player 1
     datos, address = s.recvfrom(1024)
     str_datos = datos.decode('utf-8')
     add_player(address, str_datos)
-    print(players[0])
-    s.sendto("Connected to server".encode('utf-8'), players[0]["ip"])
+    print(players[player_id])
+    s.sendto("Connected to server".encode('utf-8'), players[player_id]["ip"])
 
-    # Add Player 2
-    datos, address = s.recvfrom(1024)
-    str_datos = datos.decode('utf-8')
-    add_player(address, str_datos)
-    print(players[1])
-    s.sendto("Connected to server".encode('utf-8'), players[1]["ip"])
+
+def player_turn(player_id):
+    global movements
+    str_datos = " "
+    success = True
+    movements = 2
+    s.sendto("Your turn".encode('utf-8'), players[player_id]["ip"])
+    while str_datos != "endTurn" and movements > 0:
+        if (success):
+            s.sendto(build_field_string().encode('utf-8'),
+                     players[player_id]["ip"])
+        else:
+            s.sendto("Query invalido \n".encode('utf-8'),
+                     players[player_id]["ip"])
+
+        datos, address = s.recvfrom(1024)
+        str_datos = datos.decode('utf-8')
+
+        print(address[0] + " sent: " + str_datos)
+        success = analyze_data(str_datos.split(), player_id)
+
+
+def main():
+    create_string()
+    init_connection()
+
+    connect_player(0)
+    connect_player(1)
 
     while True:
-        str_datos = " "
-        success = True
-        s.sendto("Your turn".encode('utf-8'), players[0]["ip"])
-        while str_datos != "endTurn":
-            if (success):
-                s.sendto(build_field_string().encode('utf-8'), players[0]["ip"])
-            else:
-                s.sendto("Query invalido \n".encode('utf-8'), players[0]["ip"])
-
-            datos, address = s.recvfrom(1024)
-            str_datos = datos.decode('utf-8')
-
-            print(address[0] + " sent: " + str_datos)
-            success = analyze_data(str_datos.split())
-
-        str_datos = " "
-        success = True
-        s.sendto("Your turn".encode('utf-8'), players[1]["ip"])
-        while str_datos != "endTurn":
-            if (success):
-                s.sendto(build_field_string().encode('utf-8'), players[1]["ip"])
-            else:
-                s.sendto("Query invalido \n".encode('utf-8'), players[1]["ip"])
-
-            datos, address = s.recvfrom(1024)
-            str_datos = datos.decode('utf-8')
-
-            print(address[0] + " sent: " + str_datos)
-            success = analyze_data(str_datos.split())
+        player_turn(0)
+        player_turn(1)
 
     s.close()
 
