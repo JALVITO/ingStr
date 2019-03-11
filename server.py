@@ -175,20 +175,20 @@ def end_game(player_id):
     score_player2 = score(1)
 
     if score_player1 > score_player2:
-        result += players[0]["name"] + " won \n \n"
+        result += players[0]["name"] + " won \n"
     elif score_player1 < score_player2:
-        result += players[1]["name"] + " won \n \n"
+        result += players[1]["name"] + " won \n"
     else:
         result += game_tie()
 
     result += player_inventory(0)
     result += player_inventory(1)
 
-    s.sendto("Ending game...".encode('utf-8'), players[0]["ip"])
-    s.sendto("endGame".encode('utf-8'), players[0]["ip"])
+    s.sendto("Ending game...".encode('utf-8'), players[player_id]["ip"])
+    s.sendto("endGame".encode('utf-8'), players[player_id]["ip"])
     s.sendto(result.encode('utf-8'), players[player_id]["ip"])
-    s.sendto("Ending game...".encode('utf-8'), players[1]["ip"])
-    s.sendto(result.encode('utf-8'), players[1]["ip"])
+    s.sendto("Ending game...".encode('utf-8'), players[1-player_id]["ip"])
+    s.sendto(result.encode('utf-8'), players[1-player_id]["ip"])
 
     gameRunning = False
     movements = 0
