@@ -17,8 +17,8 @@ movements = None
 
 
 def init_connection():
-    server_port = 5000
     global s
+    server_port = 5000
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     s.bind(("", server_port))
 
@@ -136,20 +136,20 @@ def end_game():
 
 def connect_player(player_id):
     # Add Player 1
-    datos, address = s.recvfrom(1024)
-    str_datos = datos.decode('utf-8')
-    add_player(address, str_datos)
+    data, address = s.recvfrom(1024)
+    str_data = data.decode('utf-8')
+    add_player(address, str_data)
     print(players[player_id])
     s.sendto("Connected to server".encode('utf-8'), players[player_id]["ip"])
 
 
 def player_turn(player_id):
     global movements
-    str_datos = " "
+    str_data = " "
     success = True
     movements = 2
     s.sendto("Your turn".encode('utf-8'), players[player_id]["ip"])
-    while str_datos != "endTurn" and movements > 0:
+    while str_data != "endTurn" and movements > 0:
         if (success):
             s.sendto(build_field_string().encode('utf-8'),
                      players[player_id]["ip"])
@@ -157,25 +157,28 @@ def player_turn(player_id):
             s.sendto("Query invalido \n".encode('utf-8'),
                      players[player_id]["ip"])
 
-        datos, address = s.recvfrom(1024)
-        str_datos = datos.decode('utf-8')
+        data, address = s.recvfrom(1024)
+        str_data = data.decode('utf-8')
 
-        print(address[0] + " sent: " + str_datos)
-        success = analyze_data(str_datos.split(), player_id)
+        print(address[0] + " sent: " + str_data)
+        success = analyze_data(str_data.split(), player_id)
 
 
 def main():
-    create_string()
-    init_connection()
+    try:
+        create_string()
+        init_connection()
 
-    connect_player(0)
-    connect_player(1)
+        connect_player(0)
+        connect_player(1)
 
-    while True:
-        player_turn(0)
-        player_turn(1)
+        while True:
+            player_turn(0)
+            player_turn(1)
 
-    s.close()
+        s.close()
+    except KeyboardInterrupt:
+        s.close()
 
 
 if __name__ == "__main__":
