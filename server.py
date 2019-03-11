@@ -135,66 +135,60 @@ def identify(word_id, player_id):
     return False
 
 
-def end_game(player_id):
-    global gameRunning
-    global movements
-    result = ""
-    score_player1 = 0
-    score_player2 = 0
+def score(player_id):
+    current_sum = 0
+    for word in players[player_id]["words"]:
+        current_sum += len(word)
+    return current_sum
 
-    for word in players[0]["words"]:
-        score_player1 += len(word)
-    for word in players[1]["words"]:
-        score_player2 += len(word)
+
+def game_tie():
+    players[0]["words"].sort(key=len, reverse=True)
+    players[1]["words"].sort(key=len, reverse=True)
+
+    word_amount = min(len(players[0]["words"]), len(players[1]["words"]))
+
+    for i in range(0, word_amount):
+        word_player1 = players[0]["words"][i]
+        word_player2 = players[1]["words"][i]
+
+        if len(word_player1) > len(word_player2):
+            return players[0]["name"] + " won \n"
+        elif len(word_player1) < len(word_player2):
+            return players[1]["name"] + " won \n"
+
+    return "Game is a tie \n"
+
+
+def player_inventory(player_id):
+    inventory = ''
+    inventory += "\n" + players[player_id]["name"] + "'s inventory: \n"
+    for word in players[player_id]["words"]:
+        inventory += word + "\n"
+    return inventory
+
+
+def end_game(player_id):
+    global gameRunning, movements
+    result = ""
+    score_player1 = score(0)
+    score_player2 = score(1)
 
     if score_player1 > score_player2:
         result += players[0]["name"] + " won \n \n"
     elif score_player1 < score_player2:
         result += players[1]["name"] + " won \n \n"
     else:
-        players[0]["words"].sort(key=len, reverse=True)
-        players[1]["words"].sort(key=len, reverse=True)
+        result += game_tie()
 
-        word_amount = min(len(players[0]["words"]), len(players[1]["words"]))
+    result += player_inventory(0)
+    result += player_inventory(1)
 
-        equal = 0
-        for i in range(0, word_amount):
-            word_player1 = players[0]["words"][i]
-            word_player2 = players[1]["words"][i]
-
-            if len(word_player1) > len(word_player2):
-                result += players[0]["name"] + " won \n"
-                break
-            elif len(word_player1) < len(word_player2):
-                result += players[1]["name"] + " won \n"
-                break
-            else:
-                equal += 1
-
-        if equal == len(players[1]["words"]):
-            result += "Game is a tie \n"
-
-    result += "\n" + players[0]["name"] + "'s inventory: \n"
-    for word in players[0]["words"]:
-        result += word + "\n"
-
-    result += "\n" + players[1]["name"] + "'s inventory: \n"
-    for word in players[1]["words"]:
-        result += word + "\n"
-
-    if player_id == 0:
-        s.sendto("Ending game...".encode('utf-8'), players[0]["ip"])
-        s.sendto("endGame".encode('utf-8'), players[0]["ip"])
-        s.sendto(result.encode('utf-8'), players[0]["ip"])
-        s.sendto("Ending game...".encode('utf-8'), players[1]["ip"])
-        s.sendto(result.encode('utf-8'), players[1]["ip"])
-
-    else:
-        s.sendto("Ending game...".encode('utf-8'), players[1]["ip"])
-        s.sendto("endGame".encode('utf-8'), players[1]["ip"])
-        s.sendto(result.encode('utf-8'), players[1]["ip"])
-        s.sendto("Ending game...".encode('utf-8'), players[0]["ip"])
-        s.sendto(result.encode('utf-8'), players[0]["ip"])
+    s.sendto("Ending game...".encode('utf-8'), players[0]["ip"])
+    s.sendto("endGame".encode('utf-8'), players[0]["ip"])
+    s.sendto(result.encode('utf-8'), players[player_id]["ip"])
+    s.sendto("Ending game...".encode('utf-8'), players[1]["ip"])
+    s.sendto(result.encode('utf-8'), players[1]["ip"])
 
     gameRunning = False
     movements = 0
