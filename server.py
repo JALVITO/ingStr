@@ -74,6 +74,8 @@ def analyze_data(data, player_id):
             movements -= 1
         elif "end" in data:
             end_game(player_id)
+        elif "end_turn" in data:
+            movements = 0
         else:
             return False
         return True
