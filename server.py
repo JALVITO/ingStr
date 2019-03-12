@@ -61,7 +61,8 @@ def analyze_data(data, player_id):
     global movements
     try:
         if "substring" in data and int(data[2]) <= int(data[3]):
-            substring(int(data[1]), int(data[2]), int(data[3]))
+            if(not substring(int(data[1]), int(data[2]), int(data[3]))):
+                return False
             movements -= 1
         elif "concat" in data:
             concat(int(data[1]), int(data[2]))
@@ -89,9 +90,12 @@ def add_player(ip, name):
 
 def substring(word_id, low_bound, up_bound):
     word = play_field[word_id]
+    if(up_bound >= len(word) or low_bound < 0 or
+       (up_bound == len(word) - 1 and low_bound == 0)):
+        return False
     play_field.append(word[low_bound:up_bound+1])
     play_field[word_id] = word[0:low_bound] + word[up_bound+1:]
-    return
+    return True
 
 
 def concat(word1_id, word2_id):
