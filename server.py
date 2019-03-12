@@ -90,7 +90,8 @@ def add_player(ip, name):
 
 def substring(word_id, low_bound, up_bound):
     word = play_field[word_id]
-    if(up_bound >= len(word) or low_bound < 0):
+    if(up_bound >= len(word) or low_bound < 0 or
+       (up_bound == len(word) - 1 and low_bound == 0)):
         return False
     play_field.append(word[low_bound:up_bound+1])
     play_field[word_id] = word[0:low_bound] + word[up_bound+1:]
