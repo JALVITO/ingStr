@@ -24,8 +24,7 @@ NOTE: You can add the exports in your `bash_profile` or equivalent file
 **Progression:**
 * Players use string commands (substring, concat, reverse) to manipulate the strings on the playing field.
 * Their objective is to isolate a valid word (length > 2 and in English dictionary) in order to add it to their inventory.
-* Players can use up to two string commands per turn.
-* Players are allowed to identify a word after having used both their moves.
+* Players can use up to three commands per turn.
 
 **Resolution:**
 * Game ends after both players acknowledge no other words can be formed.
