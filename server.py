@@ -126,7 +126,11 @@ def is_valid(word):
 
 
 def identify(word_id, player_id):
-    if is_valid(play_field[word_id]):
+    word = play_field[word_id]
+    if len(word) <= 2:
+        print("Small word")
+        return False
+    if is_valid(word):
         print("It exists")
         players[player_id]["words"].append(play_field[word_id])
         play_field.pop(word_id)
