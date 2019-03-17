@@ -14,6 +14,7 @@ ip_server = input("Dirección del servidor: ")
 server_port = 5000
 message = " "
 str_response = " "
+stop_printing = ["continue", "end", "endGame"]
 
 s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
@@ -40,10 +41,12 @@ while message != "quit" and str_response != "endGame":
         s.sendto(message.encode('utf-8'), (ip_server, server_port))
         response = s.recv(1024)
         str_response = response.decode('utf-8')
-        print(str_response)
 
-        response = s.recv(1024)
-        str_response = response.decode('utf-8')
+        while str_response not in stop_printing:
+            print(str_response)
+            response = s.recv(1024)
+            str_response = response.decode('utf-8')
+
         if str_response == "end" or str_response == "endGame":
             break
 
