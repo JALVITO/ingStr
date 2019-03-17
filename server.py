@@ -77,6 +77,8 @@ def analyze_data(data, player_id):
             end_game(player_id)
         elif "end_turn" in data:
             movements = 0
+        elif "help" in data:
+            print_help(data, players[player_id]["ip"])
         else:
             return False
         return True
@@ -141,6 +143,18 @@ def identify(word_id, player_id):
         return True
     print("It doesn't exists")
     return False
+
+
+def print_help(data, ip):
+    message = "Possible commands:"
+    message += "\nDivides word into another word: substring word_id low_bound up_bound"
+    message += "\nConcatenate two words: concat word1_id word2_id"
+    message += "\nReverse the order of a word: reverse word_id"
+    message += "\nIdentify a word to gain points: identify word_id"
+    message += "\nEnd your turn: end_turn"
+    message += "\nEnd the game: end"
+    message += "\n Ask for help: help\n"
+    s.sendto(message.encode('utf-8'), ip)
 
 
 def score(player_id):
