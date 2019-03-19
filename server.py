@@ -15,6 +15,16 @@ language = 'en'
 s = None
 movements = None
 gameRunning = True
+help_messages = {
+    'substring': ("\nCreate new word from pre word: substring word_id"
+                  "low_bound up_bound"),
+    'concat': "\nConcatenate two words: concat word1_id word2_id",
+    'reverse': "\nReverse the order of a word: reverse word_id",
+    'identify': "\nIdentify a word to gain points: identify word_id",
+    'end_turn': "\nEnd your turn: end_turn",
+    'end': "\nEnd the game: end",
+    'help': "\nAsk for help: help"
+}
 
 
 def init_connection():
@@ -58,23 +68,25 @@ def build_field_string():
 def analyze_data(data, player_id):
     global movements
     try:
-        if "substring" in data and int(data[2]) <= int(data[3]):
+        if "substring" == data[0] and int(data[2]) <= int(data[3]):
             if(not substring(int(data[1]), int(data[2]), int(data[3]))):
                 return False
             movements -= 1
-        elif "concat" in data:
+        elif "concat" == data[0]:
             concat(int(data[1]), int(data[2]))
             movements -= 1
-        elif "reverse" in data:
+        elif "reverse" == data[0]:
             reverse(int(data[1]))
             movements -= 1
-        elif "identify" in data:
+        elif "identify" == data[0]:
             identify(int(data[1]), player_id)
             movements -= 1
-        elif "end" in data:
+        elif "end" == data[0]:
             end_game(player_id)
-        elif "end_turn" in data:
+        elif "end_turn" == data[0]:
             movements = 0
+        elif "help" == data[0]:
+            print_help(data, players[player_id]["ip"])
         else:
             return False
         return True
@@ -139,6 +151,21 @@ def identify(word_id, player_id):
         return True
     print("It doesn't exists")
     return False
+
+
+def print_help(data, ip):
+    message = None
+    if len(data) == 1:
+        message = "Possible commands:"
+        for key in help_messages:
+            message += help_messages[key]
+    elif data[1] in help_messages:
+        message = "The command you're looking is:"
+        message += help_messages[data[1]]
+    else:
+        message = "The command you're looking for doesn't exists"
+    message += "\n"
+    s.sendto(message.encode('utf-8'), ip)
 
 
 def score(player_id):
@@ -232,7 +259,8 @@ def player_turn(player_id):
                      players[player_id]["ip"])
 
         if movements > 0:
-            s.sendto("cont".encode('utf-8'), players[player_id]["ip"])
+            print(movements)
+            s.sendto("continue".encode('utf-8'), players[player_id]["ip"])
         else:
             s.sendto("end".encode('utf-8'), players[player_id]["ip"])
 
