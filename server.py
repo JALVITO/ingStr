@@ -39,21 +39,19 @@ def create_string():
 
 def build_field_string():
     field = ""
-    cont = 0
-    for word in play_field:
+    for index, word in enumerate(play_field):
         l1 = "   0"
         l2 = "             "
 
         if len(word) > 5:
             l1 += "    5"
-            if len(word) > 10:
-                for x in range(11, len(word), 5):
+            if len(word) >= 10:
+                for x in range(10, len(word), 5):
                     l1 += "    " + str(int(x/10))
-                    l2 += str((x-1) % 10) + "    "
+                    l2 += str((x) % 10) + "    "
 
-        field += "{:0>2}".format(cont) + " " + word
+        field += "{:0>2}".format(index) + " " + word
         field += "\n" + l1 + "\n" + l2 + "\n"
-        cont += 1
     return field
 
 
