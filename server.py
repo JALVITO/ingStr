@@ -250,7 +250,8 @@ def player_turn(player_id):
         for move in previous_moves:
             s.sendto(move.encode('utf-8'), players[player_id]['ip'])
         previous_moves = []
-    s.sendto('Your move'.encode('utf-8'), players[player_id]['ip'])
+        s.sendto('\n\n')
+    s.sendto('continue'.encode('utf-8'), players[player_id]['ip'])
 
     while str_data != "endTurn" and movements > 0:
         data, address = s.recvfrom(1024)

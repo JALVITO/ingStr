@@ -18,6 +18,15 @@ stop_printing = ["continue", "end", "endGame"]
 
 s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
+
+def continous_printing():
+    global str_response
+    while str_response not in stop_printing:
+        print(str_response)
+        response = s.recv(1024)
+        str_response = response.decode('utf-8')
+
+
 name = input("Nombre de jugador: ")
 s.sendto(name.encode('utf-8'), (ip_server, server_port))
 print(s.recv(1024).decode('utf-8'))
@@ -34,18 +43,15 @@ while message != "quit" and str_response != "endGame":
 
     response = s.recv(1024)
     str_response = response.decode('utf-8')
-    print(str_response)
+    continous_printing()
 
     while message != "endTurn":
         message = input("Query: ")
         s.sendto(message.encode('utf-8'), (ip_server, server_port))
+
         response = s.recv(1024)
         str_response = response.decode('utf-8')
-
-        while str_response not in stop_printing:
-            print(str_response)
-            response = s.recv(1024)
-            str_response = response.decode('utf-8')
+        continous_printing()
 
         if str_response == "end" or str_response == "endGame":
             break
