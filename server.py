@@ -25,6 +25,7 @@ help_messages = {
     'end': "\nEnd the game: end",
     'help': "\nAsk for help: help"
 }
+previous_moves = []
 
 
 def init_connection():
@@ -237,16 +238,25 @@ def connect_player(player_id):
 
 
 def player_turn(player_id):
-    global movements
+    global movements, previous_moves
     str_data = " "
     success = True
     movements = 3
     s.sendto("Your turn".encode('utf-8'), players[player_id]["ip"])
     s.sendto(build_field_string().encode('utf-8'), players[player_id]["ip"])
+    if(len(previous_moves) > 0):
+        s.sendto('Previous player moves:'.encode('utf-8'),
+                 players[player_id]['ip'])
+        for move in previous_moves:
+            s.sendto(move.encode('utf-8'), players[player_id]['ip'])
+        previous_moves = []
+        s.sendto('\n\n')
+    s.sendto('continue'.encode('utf-8'), players[player_id]['ip'])
 
     while str_data != "endTurn" and movements > 0:
         data, address = s.recvfrom(1024)
         str_data = data.decode('utf-8')
+        previous_moves.append(str_data)
 
         print(address[0] + " sent: " + str_data)
         success = analyze_data(str_data.split(), player_id)
